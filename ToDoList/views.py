@@ -51,7 +51,7 @@ def update_status(request, task_id):
     if request.method == "POST":
         id = User.objects.get(id = request.session['user'])
         task = Task.objects.get(id = task_id,user_id=id)
-        task.status = "complete" if task.status == "pending" else "pending"
+        task.status = request.POST['status_value']
         task.save()
         request.session['update_status_status'] = f"Task {task.name} updated successfully"
         request.session['update_status_id'] = task.id
