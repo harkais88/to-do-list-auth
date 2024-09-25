@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do List</title>
+</head>
+<body>
+    <h1> My To Do List </h1>
+
+    Welcome, {{user}}
+    <a href="{% url "logout" %}">Logout</a>
+
+    {% if delete_status %}
+        {{delete_status}}
+    {% endif %}
+
+    <table>
+        <tr>
+            <th>Task Name</th>
+            <th>Task Status</th>
+        </tr>
+        {% for task in tasks %}
+        
+        <tr>
+            <td> {{task.name}} </td>
+            <td>
+                <form action="{% url "status" task.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="status" value="{% if "complete" %}pending{% else %}complete{% endif %}">
+                    <input type="checkbox" name="status_check" {% if task.status == "complete" %}checked{% endif %} onchange= "this.form.submit()">
+                </form>
+            </td>
+            <td>
+                <form action="{% url "delete" task.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="submit" value="Delete">
+                </form>
+            </td>
+
+            {% if update_status_status and task.id == update_status_id %}
+            {{update_status_status}}
+            {% endif %}
+
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+    <hr>
+
+    <h3>Create your own task!</h3>
+    <form action="{% url "create" %}" method="post">
+        {% csrf_token %}
+        <input type="text" name="name" placeholder="Enter Task">
+        <input type="submit" value="Create Task">
+    </form>
+
+    {% if create_status %}
+    <h4>{{create_status}}</h4> 
+    {% elif create_error %}
+    <h4>{{create_error}}</h4>
+    {% endif %}
+</body>
+</html>
