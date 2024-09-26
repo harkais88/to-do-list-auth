@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
 from django.urls import reverse
 from .models import User
+from .utils import make_password,check_password
 
 def login(request):
     """Login Method"""
@@ -14,9 +15,12 @@ def login(request):
         password = request.POST["password"]
         
         try:
-            user = User.objects.get(email = email,password = password)
-            request.session['user'] = user.id
-            return redirect(reverse('index'))
+            user = User.objects.get(email = email)
+            if check_password(password,user.password):
+                request.session['user'] = user.id
+                return redirect(reverse('index'))
+            else:
+                context['login_error'] = "Error Occured"
         except:
             context['login_error'] = "Error Occured"
     return render(request,'login.html',context)
@@ -34,7 +38,7 @@ def register(request):
 
         new_user = User.objects.filter(email=email)
         if new_user.count() == 0:
-            User(first_name=first_name,last_name=last_name,email=email,password=password).save()
+            User(first_name=first_name,last_name=last_name,email=email,password=make_password(password)).save()
             return redirect('login')
         else:
             context['error'] = 'User already exists'

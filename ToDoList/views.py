@@ -1,16 +1,16 @@
 from django.shortcuts import render,redirect
 from django.urls import reverse
 from .models import Task, User
+from .utils import get_user_data
 
 def index(request):
     if 'user' not in request.session:
         return redirect(reverse('login'))
     
     config = {}
-    # config['tasks'] = Task.objects.all()
-    user_data = User.objects.get(id = request.session['user'])
+    user_data = get_user_data(request)
     config['user'] = f"{user_data.first_name} {user_data.last_name}"
-    tasks = Task.objects.filter(user_id = request.session['user'])
+    tasks = Task.objects.filter(user_id = user_data)
     config['tasks'] = tasks if tasks.count() > 0 else None
     config['create_status'] = request.session.pop('create_status',None)
     config['create_error'] = request.session.pop('create_error',None)
@@ -23,7 +23,7 @@ def index(request):
 def create(request):
     """Creates New Task in To Do List"""
     if request.method == "POST":
-        id = User.objects.get(id = request.session['user'])
+        id = get_user_data(request)
         name = request.POST['name']
         query = Task.objects.filter(name = name,user_id=id)
         if query.count() == 0:
@@ -38,7 +38,7 @@ def create(request):
 def delete(request, task_id):
     """Deletes Task in To Do List"""
     if request.method == "POST":
-        id = User.objects.get(id = request.session['user'])
+        id = get_user_data(request)
         try:
             task = Task.objects.get(id = task_id,user_id=id)
             task.delete()
@@ -50,7 +50,7 @@ def delete(request, task_id):
 def update_status(request, task_id):
     """Updates Task Status in To Do List"""
     if request.method == "POST":
-        id = User.objects.get(id = request.session['user'])
+        id = get_user_data(request)
         task = Task.objects.get(id = task_id,user_id=id)
         task.status = request.POST['status_value']
         task.save()
