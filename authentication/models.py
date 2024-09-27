@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 class User(models.Model):
@@ -7,8 +8,9 @@ class User(models.Model):
     email = models.EmailField(blank=False)
     password = models.CharField(max_length=255,null=False)
     is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return f"{self.first_name} {self.last_name} Email: {self.email} Status: {self.is_active} Created At: {self.date_joined}"
+        return f"{self.first_name} {self.last_name} Email:{self.email} Status:{self.is_active} \n \
+                Created At: {self.created_at} Updated At: {self.updated_at}"

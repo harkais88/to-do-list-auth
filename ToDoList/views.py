@@ -58,3 +58,13 @@ def update_status(request, task_id):
         request.session['update_status_id'] = task.id
     return redirect('index')
     
+def display(request, display_type):
+    config = {}
+    user_data = get_user_data(request)
+    tasks = Task.objects.filter(user_id = user_data, status = display_type)
+
+    config['display_type'] = "Completed" if display_type == "complete" else "Active"
+    config['user'] = f"{user_data.first_name} {user_data.last_name}"
+    config['tasks'] = tasks
+    
+    return render(request,"display.html",config)

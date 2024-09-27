@@ -1,0 +1,48 @@
+{% extends "index.html" %}
+
+{% block title %} {{display_type}} {% endblock title %}
+
+{% block content %}
+
+    <main id="main" class="main">
+        <div class="pagetitle">
+            <h1>{{display_type}} Tasks</h1>
+            <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'index'%}">Home</a></li>
+                <li class="breadcrumb-item active">{{display_type}}</li>
+            </ol>
+            </nav>
+        </div>
+
+        <section class="section">
+            <div class="row">
+            <div class="col-12">
+      
+                <div class="card-body">
+                  <h5 class="card-title">Tasks</h5>
+      
+                  <table class="table table-hover datatable">
+                    <thead>
+                      <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for task in tasks %}
+                            <tr>
+                                <td><div class="text-primary">{{task.name}}</div></td>
+                                <td><span class="badge {% if display_type == "Completed" %}bg-success{% else %}bg-warning{% endif %}">{{task.status}}</span></td>
+                            </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+      
+              </div>
+            </div>
+          </div>
+          </section>
+    </main>
+
+{% endblock %}

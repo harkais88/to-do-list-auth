@@ -15,7 +15,7 @@ def login(request):
         password = request.POST["password"]
         
         try:
-            user = User.objects.get(email = email)
+            user = User.objects.get(email = email, is_active = True)
             if check_password(password,user.password):
                 request.session['user'] = user.id
                 return redirect(reverse('index'))
