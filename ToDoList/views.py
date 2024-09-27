@@ -16,7 +16,7 @@ def index(request):
     config['create_error'] = request.session.pop('create_error',None)
     config['delete_status'] = request.session.pop('delete_status',None)
     config['update_status_status'] = request.session.pop('update_status_status',None)
-    config['update_status_id'] = request.session.pop('update_status_id',None)
+    # config['update_status_id'] = request.session.pop('update_status_id',None)
     
     return render(request,'index.html',config)
 
@@ -55,7 +55,7 @@ def update_status(request, task_id):
         task.status = request.POST['status_value']
         task.save()
         request.session['update_status_status'] = f"Task {task.name} updated successfully"
-        request.session['update_status_id'] = task.id
+        # request.session['update_status_id'] = task.id
     return redirect('index')
     
 def display(request, display_type):
