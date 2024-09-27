@@ -16,6 +16,7 @@ def index(request):
     config['create_error'] = request.session.pop('create_error',None)
     config['delete_status'] = request.session.pop('delete_status',None)
     config['update_status_status'] = request.session.pop('update_status_status',None)
+    config['update_name_status'] = request.session.pop('update_name_status',None)
     # config['update_status_id'] = request.session.pop('update_status_id',None)
     
     return render(request,'index.html',config)
@@ -56,6 +57,18 @@ def update_status(request, task_id):
         task.save()
         request.session['update_status_status'] = f"Task {task.name} updated successfully"
         # request.session['update_status_id'] = task.id
+    return redirect('index')
+
+def update_name(request,task_id):
+    if request.method == "POST":
+        try:
+            task = Task.objects.get(id = task_id)
+            task.name = request.POST['updated_name']
+            task.save()
+            # request.session['update_name_id'] = task.id
+            request.session['update_name_status'] = f"Task Name Updated"
+        except Task.DoesNotExist:
+            request.session['update_name_status'] = f"Task ID {task_id} does not exist"
     return redirect('index')
     
 def display(request, display_type):

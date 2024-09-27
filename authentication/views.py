@@ -20,9 +20,9 @@ def login(request):
                 request.session['user'] = user.id
                 return redirect(reverse('index'))
             else:
-                context['login_error'] = "Error Occured"
+                context['login_error'] = "You have entered wrong username and/or password"
         except:
-            context['login_error'] = "Error Occured"
+            context['login_error'] = "You have entered wrong username and/or password"
     return render(request,'login.html',context)
 
 def register(request):
@@ -41,7 +41,7 @@ def register(request):
             User(first_name=first_name,last_name=last_name,email=email,password=make_password(password)).save()
             return redirect('login')
         else:
-            context['error'] = 'User already exists'
+            context['register_error'] = 'User with your email already exists'
     return render(request,'register.html',context)
     
 def logout(request):

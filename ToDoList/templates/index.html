@@ -119,6 +119,16 @@
         </a>
       </li><!-- End Dashboard Nav -->
 
+      <li class="nav-heading">Account</li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'logout' %}">
+            <i class="bi bi-box-arrow-right"></i><span>
+            <span>Sign Out</span>
+        </a>
+      </li>
+
+
     </ul>
 
   </aside><!-- End Sidebar-->
@@ -154,7 +164,9 @@
                 </div>
 
                 <div class="d-grid gap-2 mt-3">
-                  <button type="submit" class="btn btn-primary">Create Task</button>
+                  <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-folder"></i> Create Task
+                  </button>
                 </div>
 
               </form><!-- End General Form Elements -->
@@ -166,10 +178,17 @@
     </section>
 
     <!-- Status notifications-->
-    {% if create_status or delete_status or update_status_status %}
+    {% if create_status or delete_status or update_status_status or update_name_status %}
       <div class = "alert alert-success bg-success text-light border-0 alert-dismissable fade show" role="alert">
-        {% if create_status %}{{create_status}}{% elif update_status_status %}{{update_status_status}}
-        {% else %}{{delete_status}}{% endif %} 
+        {% if create_status %}
+          {{create_status}}
+        {% elif update_status_status %}
+          {{update_status_status}}
+        {% elif update_name_status %}
+          {{update_name_status}}
+        {% else %}
+          {{delete_status}}
+        {% endif %} 
       </div>
     {% elif create_error %}
       <div class = "alert alert-danger bg-danger text-light border-0 alert-dismissable fade show" role="alert">
@@ -194,7 +213,7 @@
                   <th>Status</th>
                   <th>Mark Status</th>
                   <th>Delete Task</th>
-                  <th data-hidden="True">search fix</th>
+                  <th>Update Name</th>
                 </tr>
               </thead>
               <tbody>
@@ -208,7 +227,7 @@
                     <form action="{% url "status" task.id %}" method="post">
                       {% csrf_token %}
                       <input type="hidden" name="status_value" value="{% if task.status == "complete" %}pending{% else %}complete{% endif %}">
-                      <input type="checkbox" name="status" {% if task.status == "complete" %}checked{% endif %} onchange= "this.form.submit()">
+                      <input type="checkbox" class = "form-check-input" name="status" {% if task.status == "complete" %}checked{% endif %} onchange= "this.form.submit()">
                     </form>
                   </td>
 
@@ -216,11 +235,22 @@
                   <td>
                     <form action="{% url "delete" task.id %}" method="post">
                       {% csrf_token %}
-                      <input type="submit" value="Delete">
+                      {% comment %} <input type="submit" value="Delete"> {% endcomment %}
+                      <button class = "btn btn-danger" type="submit" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Delete">
+                        <i class="bi bi-exclamation-octagon"></i>
+                      </button>
                     </form>
                   </td>
 
-                  <td>search fix</td>
+                  <td>
+                      <form method="post" action = {% url "name" task.id%}>
+                          {% csrf_token %}
+                          <div class="input-group">
+                            <input type="text" class="form-control short-input" name="updated_name" id="updated_name" placeholder="Change Task Name">
+                            <button class="btn btn-info form-control" type="submit">Change</button>
+                          </div>
+                        </form>
+                  </td>
                 </tr>
                 {% endfor %}
               </tbody>

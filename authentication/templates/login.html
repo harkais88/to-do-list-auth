@@ -43,6 +43,14 @@
 <body>
 
   <main>
+    <!-- Status notifications-->
+    {% if login_error %}
+      <div class = "alert alert-danger bg-danger text-light border-0 alert-dismissable fade show text-center" role="alert">
+        {{login_error}}
+      </div>
+    {% endif %}
+
+
     <div class="container">
 
       <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">

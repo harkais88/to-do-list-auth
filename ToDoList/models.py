@@ -11,6 +11,6 @@ class Task(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     
     def __str__(self):
-        return f"Status of Task {self.name}: {self.status}"
+        return f"Status of Task {self.name}: {self.status} posted in email {self.user_id.email}"
 
     
