@@ -1,16 +1,22 @@
 from django.shortcuts import render,redirect
 from django.urls import reverse
 from .models import Task
-from .utils import get_user_data,parse_time
-from datetime import time
+from .utils import get_user_data,parse_time,set_overdue
+from datetime import timedelta
 
 def index(request):
+    """Controller for To Do List main page"""
+
     if 'user' not in request.session:
         return redirect(reverse('login'))
-    
+
     config = {}
     user_data = get_user_data(request)
     config['user'] = f"{user_data.first_name} {user_data.last_name}"
+
+    # Check if tasks are overdue whenever we enter site     
+    set_overdue(user_data)
+
     tasks = Task.objects.filter(user_id = user_data)
     config['tasks'] = tasks if tasks.count() > 0 else None
     config['create_status'] = request.session.pop('create_status',None)
@@ -24,6 +30,7 @@ def index(request):
 
 def create(request):
     """Creates New Task in To Do List"""
+
     if request.method == "POST":
         id = get_user_data(request)
         name = request.POST['name']
@@ -31,7 +38,7 @@ def create(request):
         if name != "": 
             query = Task.objects.filter(name = name,user_id=id)
             if query.count() == 0:
-                task = Task(name = name,user_id = id,time = time(hour = hours, minute = minutes, second = seconds))
+                task = Task(name = name,user_id = id,time = timedelta(hours = hours, minutes = minutes, seconds = seconds, microseconds=0))
                 task.save()
                 request.session['create_status'] = "Task created successfully"
             else:
@@ -43,6 +50,7 @@ def create(request):
 
 def delete(request, task_id):
     """Deletes Task in To Do List"""
+
     if request.method == "POST":
         id = get_user_data(request)
         try:
@@ -61,10 +69,11 @@ def update_status(request, task_id):
         task.status = request.POST['status_value']
         task.save()
         request.session['update_status_status'] = f"Task {task.name} updated successfully"
-        # request.session['update_status_id'] = task.id
     return redirect('index')
 
 def update_name(request,task_id):
+    """Updates Task Name and/or Duration in To Do List"""
+
     user_data = get_user_data(request)
     task = Task.objects.get(id = task_id, user_id= user_data)
     config = {'task': task, 'user': f"{user_data.first_name} {user_data.last_name}"}
@@ -75,24 +84,25 @@ def update_name(request,task_id):
                 hours,minutes,seconds = parse_time(hours = request.POST['updated_hours'],
                                        minutes = request.POST['updated_minutes'],
                                        seconds = request.POST['updated_seconds'])
-                task.time = time(hour=hours,minute=minutes,second=seconds)
+                task.time = timedelta(hours=hours,minutes=minutes,seconds=seconds, microseconds=0)
 
                 task.save()
-                request.session['update_name_status'] = f"Task Name Updated"
+                request.session['update_name_status'] = f"Task Successfully Updated"
                 return redirect('index')
-                # config['update_name_status'] = f"Task Name Updated"
             else:
-                # request.session['update_name_error'] = f"Please Enter Valid Task Name"
                 config['update_name_error'] = f"Please Enter Valid Task Name"
         except Task.DoesNotExist:
-            # request.session['update_name_status'] = f"Task ID {task_id} does not exist"
             config['update_name_error'] = f"Task ID {task_id} does not exist"
-    # return redirect('index')
     return render(request,"update_task.html",config)
     
 def display(request, display_type):
+    """Controller for the Display Tabs"""
+
     config = {}
     user_data = get_user_data(request)
+
+    # set_overdue(user_data) # Check for overdue tasks
+
     tasks = Task.objects.filter(user_id = user_data, status = display_type)
 
     config['display_type'] = "Completed" if display_type == "complete" else "Active"

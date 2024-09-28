@@ -1,4 +1,4 @@
-from .models import User
+from .models import User, Task
 from authentication.utils import get_auth_from_session
 
 def get_user_data(request):
@@ -14,3 +14,15 @@ def parse_time(hours, minutes, seconds):
     minutes = minutes % 60
 
     return hours, minutes, seconds
+
+def set_overdue(user_data):
+    tasks = Task.objects.filter(status__in=["pending","overdue"], user_id=user_data)
+
+    for task in tasks:
+        
+        if task.is_overdue():
+            task.status = "overdue"
+        else: 
+            task.status = "pending"
+
+        task.save()
