@@ -1,7 +1,8 @@
 from django.shortcuts import render,redirect
 from django.urls import reverse
-from .models import Task, User
-from .utils import get_user_data
+from .models import Task
+from .utils import get_user_data,parse_time
+from datetime import time
 
 def index(request):
     if 'user' not in request.session:
@@ -17,7 +18,7 @@ def index(request):
     config['delete_status'] = request.session.pop('delete_status',None)
     config['update_status_status'] = request.session.pop('update_status_status',None)
     config['update_name_status'] = request.session.pop('update_name_status',None)
-    # config['update_status_id'] = request.session.pop('update_status_id',None)
+    config['update_name_error'] = request.session.pop('update_name_error',None)
     
     return render(request,'index.html',config)
 
@@ -26,14 +27,18 @@ def create(request):
     if request.method == "POST":
         id = get_user_data(request)
         name = request.POST['name']
-        query = Task.objects.filter(name = name,user_id=id)
-        if query.count() == 0:
-            task = Task(name = name,user_id = id)
-            task.save()
-            request.session['create_status'] = "Task created successfully"
+        hours, minutes, seconds = parse_time(request.POST['hours'], request.POST['minutes'], request.POST['seconds'])
+        if name != "": 
+            query = Task.objects.filter(name = name,user_id=id)
+            if query.count() == 0:
+                task = Task(name = name,user_id = id,time = time(hour = hours, minute = minutes, second = seconds))
+                task.save()
+                request.session['create_status'] = "Task created successfully"
+            else:
+                request.session['create_error'] = "Task already exists"
         else:
-            request.session['create_error'] = "Task already exists"
-    
+            request.session['create_error'] = "Please enter task"
+
     return redirect('index')
 
 def delete(request, task_id):
@@ -60,16 +65,30 @@ def update_status(request, task_id):
     return redirect('index')
 
 def update_name(request,task_id):
+    user_data = get_user_data(request)
+    task = Task.objects.get(id = task_id, user_id= user_data)
+    config = {'task': task, 'user': f"{user_data.first_name} {user_data.last_name}"}
     if request.method == "POST":
         try:
-            task = Task.objects.get(id = task_id)
-            task.name = request.POST['updated_name']
-            task.save()
-            # request.session['update_name_id'] = task.id
-            request.session['update_name_status'] = f"Task Name Updated"
+            if request.POST['updated_name'] != "":
+                task.name = request.POST['updated_name']
+                hours,minutes,seconds = parse_time(hours = request.POST['updated_hours'],
+                                       minutes = request.POST['updated_minutes'],
+                                       seconds = request.POST['updated_seconds'])
+                task.time = time(hour=hours,minute=minutes,second=seconds)
+
+                task.save()
+                request.session['update_name_status'] = f"Task Name Updated"
+                return redirect('index')
+                # config['update_name_status'] = f"Task Name Updated"
+            else:
+                # request.session['update_name_error'] = f"Please Enter Valid Task Name"
+                config['update_name_error'] = f"Please Enter Valid Task Name"
         except Task.DoesNotExist:
-            request.session['update_name_status'] = f"Task ID {task_id} does not exist"
-    return redirect('index')
+            # request.session['update_name_status'] = f"Task ID {task_id} does not exist"
+            config['update_name_error'] = f"Task ID {task_id} does not exist"
+    # return redirect('index')
+    return render(request,"update_task.html",config)
     
 def display(request, display_type):
     config = {}

@@ -157,15 +157,28 @@
               <form method="POST" action="{% url "create" %}">
                 {% csrf_token %} 
                 <div class="row mb-3">
-                  <label for="inputText" class="col-sm-2 col-form-label">Enter Task Here</label>
+                  <label for="inputTask" class="col-sm-2 col-form-label">Enter Task Here</label>
                   <div class="col-sm-10">
-                    <input type="text" name="name" class="form-control">
+                    <input type="text" name="name" class="form-control" id="inputTask">
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="inputTime" class="col-sm-2 col-form-label">Enter Time Here</label>
+                  <div class="col-sm-10">
+                    <div class="input-group">
+                      <input class="form-control" id="inputTime" name="hours" type="number" placeholder="Hours">
+                      <span class="input-group-text">:</span>
+                      <input class="form-control" id="inputTime" name="minutes" type="number" placeholder="Minutes">
+                      <span class="input-group-text">:</span>
+                      <input class="form-control" id="inputTime" name="seconds" type="number" placeholder="Seconds">
+                    </div>
                   </div>
                 </div>
 
                 <div class="d-grid gap-2 mt-3">
                   <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-folder"></i> Create Task
+                    <i class="bi bi-upload"></i> Create Task
                   </button>
                 </div>
 
@@ -193,17 +206,20 @@
           <button class="btn-close btn-close-white align-self-center" type="button" data-bs-dismiss="alert" aria-label="Close" style="margin-left: auto; font-size: 2rem;"></button>
         </div>
       </div>
-    {% elif create_error %}
+    {% elif create_error or update_name_error or update_cancelled%}
       <div class = "alert alert-danger bg-danger text-light border-0 alert-dismissable fade show" role="alert" style="padding-left: 1.5rem;">
         <div class="row align-items-center">
-        {{create_error}}
+        {% if create_error %}
+          {{create_error}}
+        {% else %}
+          {{update_name_error}}
+        {% endif %}
         <button class="btn-close btn-close-white align-self-center" type="button" data-bs-dismiss="alert" aria-label="Close" style="margin-left: auto; font-size: 2rem;"></button>
         </div>
       </div>
     {% endif %}
 
     <!-- Show Tasks Section -->
-    <!-- Dirty Fix, Need to check JS to fix-->
     <section class="section">
       <div class="row">
       <div class="col-12">
@@ -248,14 +264,26 @@
                     </form>
                   </td>
 
+                  {% comment %} <!-- Update Task-->
                   <td>
                       <form method="post" action = {% url "name" task.id%}>
                           {% csrf_token %}
                           <div class="input-group">
                             <input type="text" class="form-control short-input" name="updated_name" id="updated_name" placeholder="Change Task Name">
-                            <button class="btn btn-info form-control" type="submit">Change</button>
+                            <button class="btn btn-info form-control" type="submit">
+                              <i class="bi bi-folder"></i>Change
+                            </button>
                           </div>
                         </form>
+                  </td> {% endcomment %}
+
+                  <td>
+                  <form method="GET" action={% url "name" task.id %}>
+                      {% csrf_token %}
+                      <button class="btn btn-info form-control" action = "{% url "name" task.id %}" type = "submit">
+                      <i class="ri-ball-pen-line"></i>Change
+                      </button>
+                  </form>
                   </td>
                 </tr>
                 {% endfor %}

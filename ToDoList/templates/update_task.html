@@ -1,0 +1,74 @@
+{% extends "index.html" %}
+
+{% block title %} Update Form {% endblock title %}
+
+{% block content %}
+
+    <main id="main" class="main">
+        <div class="pagetitle">
+            <h1>{{display_type}} Tasks</h1>
+            <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'index'%}">Home</a></li>
+                <li class="breadcrumb-item active">Update Task</li>
+            </ol>
+            </nav>
+        </div>
+
+        <section class="section">
+            <div class="col-12">
+      
+                <div class="card-body">
+                  <h5 class="card-title">Update Task Form</h5>
+                  <p>Change your task and submit. Submitting time will reset due time</p>
+
+                  <!-- Status Notification -->
+                  {% if update_name_error %}
+                  <div class = "alert alert-danger bg-danger text-light border-0 alert-dismissable fade show" role="alert" style="padding-left: 1.5rem;">
+                    <div class="row align-items-center">
+                      {{update_name_error}}
+                    <button class="btn-close btn-close-white align-self-center" type="button" data-bs-dismiss="alert" aria-label="Close" style="margin-left: auto; font-size: 2rem;"></button>
+                    </div>
+                  </div>
+                  {% endif %}
+                    
+                  <form action="{% url "name" task.id %}" method="post">
+                    {% csrf_token %}
+
+                    <div class="row mb-3">
+                        <label for="updated_name" class="col-sm-2 col-form-label">Enter New Task</label>
+                        <div class="col-sm-10">
+                          <input type="text" class="form-control" name="updated_name" id="updated_name" placeholder="Enter New Task Here" value="{{task.name}}">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="inputTime" class="col-sm-2 col-form-label">Change Time Here</label>
+                        <div class="col-sm-10">
+                          <div class="input-group">
+                            <input class="form-control" id="inputTime" name="updated_hours" type="number" placeholder="Hours" value="{{task.time.hour}}">
+                            <span class="input-group-text">:</span>
+                            <input class="form-control" id="inputTime" name="updated_minutes" type="number" placeholder="Minutes" value="{{task.time.minute}}">
+                            <span class="input-group-text">:</span>
+                            <input class="form-control" id="inputTime" name="updated_seconds" type="number" placeholder="Seconds" value="{{task.time.second}}">
+                          </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-3">
+                        <button type="submit" class="btn btn-primary">
+                          <i class="bi bi-upload"></i> Update Task
+                        </button>
+                    </div>
+
+
+                    <div class="d-grid gap-2 mt-3">
+                        <p class="text-center"><a href="{% url "index" %}">Cancel Update</a></p>
+                    </div>
+                </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+{% endblock %}
