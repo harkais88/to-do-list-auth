@@ -12,7 +12,12 @@ class Task(models.Model):
     ]
     status = models.CharField(max_length=20,choices=status_choices,default="pending")
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(default=timezone.now)
+
+    def save(self, *args, set_updated_at = True, **kwargs):
+        if set_updated_at:
+            self.updated_at = timezone.now()
+        super().save(*args, **kwargs)
 
     def is_overdue(self):
         current_time = timezone.now()

@@ -22,7 +22,7 @@ def set_overdue(user_data):
         
         if task.is_overdue():
             task.status = "overdue"
+            task.save(set_updated_at=False)
         else: 
             task.status = "pending"
-
-        task.save()
+            task.save()
