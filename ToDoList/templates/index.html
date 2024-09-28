@@ -179,20 +179,26 @@
 
     <!-- Status notifications-->
     {% if create_status or delete_status or update_status_status or update_name_status %}
-      <div class = "alert alert-success bg-success text-light border-0 alert-dismissable fade show" role="alert">
-        {% if create_status %}
-          {{create_status}}
-        {% elif update_status_status %}
-          {{update_status_status}}
-        {% elif update_name_status %}
-          {{update_name_status}}
-        {% else %}
-          {{delete_status}}
-        {% endif %} 
+      <div class = "alert alert-success bg-success text-light border-0 alert-dismissable fade show" role="alert" style="padding-left: 1.5rem;">
+        <div class="row align-items-center">
+          {% if create_status %}
+            {{create_status}}
+          {% elif update_status_status %}
+            {{update_status_status}}
+          {% elif update_name_status %}
+            {{update_name_status}}
+          {% else %}
+            {{delete_status}}
+          {% endif %}
+          <button class="btn-close btn-close-white align-self-center" type="button" data-bs-dismiss="alert" aria-label="Close" style="margin-left: auto; font-size: 2rem;"></button>
+        </div>
       </div>
     {% elif create_error %}
-      <div class = "alert alert-danger bg-danger text-light border-0 alert-dismissable fade show" role="alert">
+      <div class = "alert alert-danger bg-danger text-light border-0 alert-dismissable fade show" role="alert" style="padding-left: 1.5rem;">
+        <div class="row align-items-center">
         {{create_error}}
+        <button class="btn-close btn-close-white align-self-center" type="button" data-bs-dismiss="alert" aria-label="Close" style="margin-left: auto; font-size: 2rem;"></button>
+        </div>
       </div>
     {% endif %}
 
