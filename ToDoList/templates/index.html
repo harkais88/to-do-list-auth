@@ -101,23 +101,30 @@
       <li class="nav-item">
         <a class="nav-link collapsed" href="{% url 'index' %}">
           <i class="bi bi-grid"></i>
-          <span>Main Page</span>
+          <span class="text-primary">Main Page</span>
         </a>
-      </li><!-- End Dashboard Nav -->
+      </li><!-- End Main Page Nav -->
 
       <li class="nav-item">
         <a class="nav-link collapsed" href="{% url 'display' display_type='complete' %}">
             <i class="bi bi-layout-text-window-reverse"></i><span>
-            <span>Completed</span>
+            <span class="text-success">Completed</span>
         </a>
-      </li><!-- End Dashboard Nav -->
+      </li><!-- End Completed Nav -->
 
       <li class="nav-item">
         <a class="nav-link collapsed" href="{% url 'display' display_type='pending' %}">
             <i class="bi bi-layout-text-window-reverse"></i><span>
-            <span>Active</span>
+            <span class="text-warning">Active</span>
         </a>
-      </li><!-- End Dashboard Nav -->
+      </li><!-- End Active Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'display' display_type='overdue' %}">
+            <i class="bi bi-layout-text-window-reverse"></i><span>
+            <span class="text-danger">Overdue</span>
+        </a>
+      </li><!-- End Overdue Nav -->
 
       <li class="nav-heading">Account</li>
 

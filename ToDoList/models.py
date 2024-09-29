@@ -30,9 +30,9 @@ class Task(models.Model):
         time_passed = (self.updated_at + self.time) - current_time
         hours, minutes, seconds = parse_time(seconds=time_passed.total_seconds())
 
-        print(f"Updated Time: {self.updated_at} Duration given: {self.time} Total: {self.updated_at + self.time} Current Time: {current_time}")
-        print(f"Time Passed: {time_passed}, which means {time_passed.total_seconds()} seconds")
-        print(f"Calculated: {hours} {minutes} {seconds}")
+        # print(f"Updated Time: {self.updated_at} Duration given: {self.time} Total: {self.updated_at + self.time} Current Time: {current_time}")
+        # print(f"Time Passed: {time_passed}, which means {time_passed.total_seconds()} seconds")
+        # print(f"Calculated: {hours} {minutes} {seconds}")
         return hours,minutes,seconds
 
     def __str__(self):
