@@ -3,6 +3,7 @@ from django.urls import reverse
 from .models import Task
 from .utils import get_user_data,parse_time,set_overdue
 from datetime import timedelta
+from django.utils import timezone
 
 def index(request):
     """Controller for To Do List main page"""
@@ -39,7 +40,7 @@ def create(request):
             query = Task.objects.filter(name = name,user_id=id)
             if query.count() == 0:
                 task = Task(name = name,user_id = id,time = timedelta(hours = hours, minutes = minutes, seconds = seconds, microseconds=0))
-                task.save()
+                task.save(set_updated_at=True)
                 request.session['create_status'] = "Task created successfully"
             else:
                 request.session['create_error'] = "Task already exists"
@@ -67,7 +68,7 @@ def update_status(request, task_id):
         id = get_user_data(request)
         task = Task.objects.get(id = task_id,user_id=id)
         task.status = request.POST['status_value']
-        task.save()
+        task.save(set_updated_at=True)
         request.session['update_status_status'] = f"Task {task.name} updated successfully"
     return redirect('index')
 
@@ -86,7 +87,7 @@ def update_name(request,task_id):
                                        seconds = request.POST['updated_seconds'])
                 task.time = timedelta(hours=hours,minutes=minutes,seconds=seconds, microseconds=0)
 
-                task.save()
+                task.save(set_updated_at=True)
                 request.session['update_name_status'] = f"Task Successfully Updated"
                 return redirect('index')
             else:
@@ -101,11 +102,11 @@ def display(request, display_type):
     config = {}
     user_data = get_user_data(request)
 
-    # set_overdue(user_data) # Check for overdue tasks
+    set_overdue(user_data) # Check for overdue tasks
 
     tasks = Task.objects.filter(user_id = user_data, status = display_type)
 
-    config['display_type'] = "Completed" if display_type == "complete" else "Active"
+    config['display_type'] = "Completed" if display_type == "complete" else "Active" if display_type == "pending" else "Overdue"
     config['user'] = f"{user_data.first_name} {user_data.last_name}"
     config['tasks'] = tasks
     

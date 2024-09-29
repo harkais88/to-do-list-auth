@@ -27,13 +27,60 @@
                       <tr>
                         <th scope="col">Name</th>
                         <th scope="col">Status</th>
+                        {% if display_type != "Completed" %}
+                          <th scope="col">Mark as Done</th>
+                          <th scope="col">Given Duration</th>
+                        {% if display_type == "Active" %}
+                          <th scope="col">Time Left as of now</th>
+                        {% else %}
+                          <th data-type="hidden">Hidden</th>
+                        {% endif %}
+                        {% else %}                                  <!--Dirty Fix for Enabling Search, Fix Javascript-->
+                          <th data-hidden="true">Hidden</th>
+                          <th data-hidden="True">Hidden</th>
+                          <th data-hidden="True">Hidden</th>
+                        {% endif %}
                       </tr>
                     </thead>
                     <tbody>
                       {% for task in tasks %}
                             <tr>
                                 <td><div class="text-primary">{{task.name}}</div></td>
-                                <td><span class="badge {% if display_type == "Completed" %}bg-success{% else %}bg-warning{% endif %}">{{task.status}}</span></td>
+                                <td>
+                                  <span class="badge {% if display_type == "Completed" %}bg-success 
+                                  {% elif display_type == "Active" %}bg-warning{% else %}bg-danger{% endif %}">{{task.status}}</span>
+                                </td>
+                                {% if display_type != "Completed" %}
+                                <td>
+                                  <form action="{% url "status" task.id %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="status_value" value="{% if task.status == "complete" %}pending{% else %}complete{% endif %}">
+                                    <input type="checkbox" class = "form-check-input" name="status" {% if task.status == "complete" %}checked{% endif %} onchange= "this.form.submit()">
+                                  </form>
+                                </td>
+                                <td>
+                                  {{task.time}}
+                                </td>
+
+                                {% if display_type == "Active"%}
+                                <td>
+                                  <div class="text-success">
+                                      {% with time_values=task.get_pending_time %}
+                                          {{ time_values.0 }}:{{ time_values.1 }}:{{ time_values.2 }}
+                                      {% endwith %}
+                                  </div>
+                              </td>
+
+                              {% else %}
+                              <td>Hidden</td>
+                              {% endif %}
+                              
+                              {% else %}
+                              <td>Hidden</td>
+                              <td>Hidden</td>
+                              <td>Hidden</td>
+
+                              {% endif %}
                             </tr>
                       {% endfor %}
                     </tbody>

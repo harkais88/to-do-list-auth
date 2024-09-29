@@ -141,7 +141,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Sign Out Warning</h5>
+            <h5 class="modal-title text-warning">Sign Out Warning</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
@@ -251,9 +251,10 @@
                 <tr>
                   <th>Name</th>
                   <th>Status</th>
+                  <th>Duration</th>
                   <th>Mark Status</th>
                   <th>Delete Task</th>
-                  <th>Update Name</th>
+                  <th>Update Task</th>
                 </tr>
               </thead>
               <tbody>
@@ -261,7 +262,7 @@
                 <tr>
                   <td><div class="text-primary">{{task.name}}</div></td>
                   <td><span class="badge {% if task.status == 'complete' %}bg-success{% elif task.status == "pending" %}bg-warning{% else %}bg-danger{% endif %}">{{task.status}}</span></td>
-                  
+                  <td class="text-secondary">{{task.time}}</td>
                   <!-- Update Status -->
                   <td>
                     <form action="{% url "status" task.id %}" method="post">
@@ -282,22 +283,9 @@
                     </form>
                   </td>
 
-                  {% comment %} <!-- Update Task-->
-                  <td>
-                      <form method="post" action = {% url "name" task.id%}>
-                          {% csrf_token %}
-                          <div class="input-group">
-                            <input type="text" class="form-control short-input" name="updated_name" id="updated_name" placeholder="Change Task Name">
-                            <button class="btn btn-info form-control" type="submit">
-                              <i class="bi bi-folder"></i>Change
-                            </button>
-                          </div>
-                        </form>
-                  </td> {% endcomment %}
-
+                  <!-- Update Task -->
                   <td>
                   <form method="GET" action={% url "name" task.id %}>
-                      {% csrf_token %}
                       <button class="btn btn-info form-control" action = "{% url "name" task.id %}" type = "submit">
                       <i class="ri-ball-pen-line"></i>Change
                       </button>
