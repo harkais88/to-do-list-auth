@@ -47,7 +47,8 @@ def register(request):
 def logout(request):
     try:
         del request.session['user']
-        return redirect('login')
+        # return redirect('login')
+        return render(request,'signed_out.html')
     except Exception as e:
         print(e)
     return redirect('index')

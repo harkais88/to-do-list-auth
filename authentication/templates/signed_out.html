@@ -1,0 +1,17 @@
+{% extends "login.html" %}
+
+{% block script %}
+<script>
+    setTimeout(function() {
+        window.location.href = "{% url 'login' %}";  // Change 'login' to your actual login URL name
+    }, 2000);  // 2000 milliseconds = 2 seconds
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column justify-content-center align-items-center">
+    <h5 class="card-title text-center pb-0 fs-4">Signed Out Successfully</h5>
+    <p class="text-center small">Redirecting to Login Page....</p>
+    <div class="spinner-border text-info text-center" role="status"><span class="visually-hidden">Loading...</span></div>
+</div>
+{% endblock %}

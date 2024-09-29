@@ -81,7 +81,7 @@
                     <hr class="dropdown-divider">
                   </li>
                   <li>
-                    <a class="dropdown-item d-flex align-items-center" href="{% url 'logout' %}">
+                    <a class="dropdown-item d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#signout">
                       <i class="bi bi-box-arrow-right"></i>
                       <span>Sign Out</span>
                     </a>
@@ -122,7 +122,7 @@
       <li class="nav-heading">Account</li>
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="{% url 'logout' %}">
+        <a class="nav-link collapsed" href="{% url 'logout' %}" data-bs-toggle="modal" data-bs-target="#signout">
             <i class="bi bi-box-arrow-right"></i><span>
             <span>Sign Out</span>
         </a>
@@ -136,6 +136,24 @@
   {% block content %}
 
   <main id="main" class="main">
+
+    <div class="modal fade" id="signout" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Sign Out Warning</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            You are about to sign out. Are you sure about this? Please ensure that everything is in order.
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <form method="GET" action="{% url "logout" %}"><button type="submit" class="btn btn-danger">Sign Out</button></form>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="pagetitle">
       <h1>My To Do List</h1>
